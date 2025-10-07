@@ -21,4 +21,4 @@ Recruiters and engineers can explore:
 - Real-world ETL design patterns for vendor/customer use cases  
 
 ---
-💡 *For detailed demos with explanations, check my YouTube channel: [Your Channel Link]*  
+💡 For detailed demos with explanations, check my YouTube channel: https://www.youtube.com/@iicsinformaticasimplified  
