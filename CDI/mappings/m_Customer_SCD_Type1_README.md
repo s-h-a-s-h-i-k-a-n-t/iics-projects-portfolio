@@ -40,3 +40,19 @@ MD5(
   UPPER(TRIM(ADDRESS1)) ||
   UPPER(TRIM(CITY))
 )
+
+---
+
+## 🧪 Sample Data (Before → After)
+
+### 🧮 Before Transformation (Source Data)
+| CUST_ID | CUST_NAME     | EMAIL              | PHONE        | CITY   |
+|----------|---------------|--------------------|--------------|--------|
+| 101 | Rahul Mehta   | rahul@gnail.com  | 9000000000   | Pune   |
+| 102 | Asha  Sharma  | ASHA@EXAMPLE.COM | 9876543210  | Delhi  |
+
+### ✅ After Transformation (Target Data)
+| CUST_ID | CUST_NAME     | EMAIL             | PHONE         | CITY   |
+|----------|---------------|------------------|----------------|--------|
+| 101 | Rahul Mehta   | rahul@gmail.com  | +91-9000000000 | Pune   |
+| 102 | Asha Sharma   | asha@example.com | +91-9876543210 | Delhi  |
