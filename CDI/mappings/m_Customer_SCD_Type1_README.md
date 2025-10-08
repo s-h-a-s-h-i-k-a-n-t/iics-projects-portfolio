@@ -1,18 +1,18 @@
-# 🧩 Mapping: m_Customer_SCD_Type1_MD5
+#  Mapping: m_Customer_SCD_Type1_MD5
 
-### 👋 Author’s Note
+###  Note
 This mapping was **built and tested by me (Shashi Kant)** in my Informatica IICS lab environment using sample customer data.  
 I designed it to demonstrate how **MD5 hashing** can simplify change detection logic in Slowly Changing Dimensions.  
 The goal was to show real-world ETL handling — detecting changed customer records and updating them seamlessly.
 
 ---
 
-## 📘 Objective
+##  Objective
 Implement **Slowly Changing Dimension (SCD) Type 1** using **MD5 hash comparison** to detect changes in customer attributes and overwrite the existing record with the latest values.
 
 ---
 
-## 🏗️ Design Overview
+##  Design Overview
 Pipeline flow:
 1. **SRC_CUSTOMER** → read source rows  
 2. **EXP_GENERATE_MD5** → build MD5 across business columns  
@@ -22,12 +22,12 @@ Pipeline flow:
 
 ---
 
-## 📊 Mapping Diagram
+##  Mapping Diagram
 ![Customer SCD Type 1 Mapping](./m_Customer_SCD_Type1_MD5.png)
 
 ---
 
-## ⚙️ Transformations & Purpose
+##  Transformations & Purpose
 
 | Component | Key Logic / Purpose |
 |------------|--------------------|
@@ -40,7 +40,7 @@ Pipeline flow:
 
 ---
 
-### 🔢 MD5 Expression (Example)
+###  MD5 Expression (Example)
 
 ```text
 MD5(
