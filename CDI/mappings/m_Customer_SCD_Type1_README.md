@@ -28,7 +28,7 @@ Pipeline flow:
 ---
 
 ##  Job Export
-../../jobs_exports/m_Customer_SCD_Type1_MD5-1759953821141.zip
+/jobs_exports/m_Customer_SCD_Type1_MD5-1759953821141.zip
 
 ---
 
