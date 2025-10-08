@@ -27,8 +27,11 @@ Pipeline flow:
 
 ---
 
-##  Job Export
-/jobs_exports/m_Customer_SCD_Type1_MD5-1759953821141.zip
+## Export File
+You can download the Informatica mapping export file (.zip) from the link below:
+
+[Download Mapping Export (ZIP)](../../jobs_exports/m_Customer_SCD_Type1_MD5-1759953821141.zip)
+
 
 ---
 
