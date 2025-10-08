@@ -1,5 +1,12 @@
 # 🧩 Mapping: m_Customer_SCD_Type1_MD5
 
+### 👋 Author’s Note
+This mapping was **built and tested by me (Shashi Kant)** in my Informatica IICS lab environment using sample customer data.  
+I designed it to demonstrate how **MD5 hashing** can simplify change detection logic in Slowly Changing Dimensions.  
+The goal was to show real-world ETL handling — detecting changed customer records and updating them seamlessly.
+
+---
+
 ## 📘 Objective
 Implement **Slowly Changing Dimension (SCD) Type 1** using **MD5 hash comparison** to detect changes in customer attributes and overwrite the existing record with the latest values.
 
@@ -7,11 +14,11 @@ Implement **Slowly Changing Dimension (SCD) Type 1** using **MD5 hash comparison
 
 ## 🏗️ Design Overview
 Pipeline flow:
-1) **SRC_CUSTOMER** → read source rows  
-2) **EXP_GENERATE_MD5** → build MD5 across business columns  
-3) **LKP_CUSTOMER_TARGET** → check existing target row + prior MD5  
-4) **RTR_SCD_ROUTER** → split into **INSERT** vs **UPDATE**  
-5) **TGT_INSERT_CUSTOMERS / TGT_UPDATE_CUSTOMERS** → load
+1. **SRC_CUSTOMER** → read source rows  
+2. **EXP_GENERATE_MD5** → build MD5 across business columns  
+3. **LKP_CUSTOMER_TARGET** → check existing target row and retrieve stored MD5  
+4. **RTR_SCD_ROUTER** → split into **INSERT** vs **UPDATE**  
+5. **TGT_INSERT_CUSTOMERS / TGT_UPDATE_CUSTOMERS** → load final data  
 
 ---
 
@@ -23,7 +30,7 @@ Pipeline flow:
 ## ⚙️ Transformations & Purpose
 
 | Component | Key Logic / Purpose |
-|---|---|
+|------------|--------------------|
 | **SRC_CUSTOMER** | Reads active customers from source system/table |
 | **EXP_GENERATE_MD5** | Creates a change-detection hash |
 | **LKP_CUSTOMER_TARGET** | Finds existing customer and retrieves stored MD5 |
@@ -31,7 +38,10 @@ Pipeline flow:
 | **TGT_INSERT_CUSTOMERS** | Inserts brand-new customers |
 | **TGT_UPDATE_CUSTOMERS** | Updates attributes for existing customers |
 
-**MD5 expression (example):**
+---
+
+### 🔢 MD5 Expression (Example)
+
 ```text
 MD5(
   UPPER(TRIM(CUST_NAME)) ||
@@ -40,19 +50,12 @@ MD5(
   UPPER(TRIM(ADDRESS1)) ||
   UPPER(TRIM(CITY))
 )
-
----
-
-## 🧪 Sample Data (Before → After)
-
-### 🧮 Before Transformation (Source Data)
-| CUST_ID | CUST_NAME     | EMAIL              | PHONE        | CITY   |
-|----------|---------------|--------------------|--------------|--------|
-| 101 | Rahul Mehta   | rahul@gnail.com  | 9000000000   | Pune   |
-| 102 | Asha  Sharma  | ASHA@EXAMPLE.COM | 9876543210  | Delhi  |
+### 🧾 Before Transformation (Source Data)
+| CUST_ID | CUST_NAME | EMAIL | PHONE | CITY |
+|----------|------------|--------|--------|------|
+| 101 | Rahul Mehta | rahul@gnail.com | 9000000000 | Pune |
 
 ### ✅ After Transformation (Target Data)
-| CUST_ID | CUST_NAME     | EMAIL             | PHONE         | CITY   |
-|----------|---------------|------------------|----------------|--------|
-| 101 | Rahul Mehta   | rahul@gmail.com  | +91-9000000000 | Pune   |
-| 102 | Asha Sharma   | asha@example.com | +91-9876543210 | Delhi  |
+| CUST_ID | CUST_NAME | EMAIL | PHONE | CITY |
+|----------|------------|--------|--------|------|
+| 101 | Rahul Mehta | rahul@gmail.com | +91-9000000000 | Pune |
