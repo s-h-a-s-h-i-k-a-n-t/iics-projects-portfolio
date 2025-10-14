@@ -88,4 +88,5 @@ IS_CURRENT   = 'Y'
 ---
 
 ### 🔗 Related Export  
-[Download Job Export (.zip)](../jobs_exports/m_CUSTOMER_SCD_Type_2_date-1760383465690.zip?raw=1)
+[Download Job Export (.zip)](https://github.com/s-h-a-s-h-i-k-a-n-t/iics-projects-portfolio/raw/main/jobs_exports/m_CUSTOMER_SCD_Type_2_date-1760383465690.zip)
+
