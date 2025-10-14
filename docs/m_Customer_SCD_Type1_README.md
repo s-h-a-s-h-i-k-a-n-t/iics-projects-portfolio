@@ -47,20 +47,20 @@ You can download the Informatica mapping export file (.zip) from the link below:
 
 ---
 
-# 📊 Sample Dataset – SCD Type 1 (MD5 Hash Comparison)
+#  Sample Dataset – SCD Type 1 (MD5 Hash Comparison)
 
 ### Purpose
 To demonstrate how **MD5-based change detection** identifies modified customer records and updates them in place (without retaining history).
 
 ---
 
-## 🧩 Scenario
+##  Scenario
 A customer updates their **email** and **phone number** in the source system.  
 The mapping detects these changes by comparing the **MD5 hash** of source data with that of the target table.
 
 ---
 
-## 📥 Source Data (Incoming Records)
+##  Source Data (Incoming Records)
 
 | CUSTOMER_ID | CUSTOMER_NAME | EMAIL              | PHONE       | CITY  | HASH_BEFORE_RUN |
 |--------------|----------------|--------------------|--------------|-------|-----------------|
@@ -70,7 +70,7 @@ The mapping detects these changes by comparing the **MD5 hash** of source data w
 
 ---
 
-## 📊 Target Data (Before Mapping Execution)
+##  Target Data (Before Mapping Execution)
 
 | CUSTOMER_ID | CUSTOMER_NAME | EMAIL              | PHONE       | CITY  | HASH_STORED |
 |--------------|----------------|--------------------|--------------|-------|--------------|
@@ -80,13 +80,13 @@ The mapping detects these changes by comparing the **MD5 hash** of source data w
 
 ---
 
-## 🔍 Source Changes Detected
+##  Source Changes Detected
 Record **101** has a modified email and phone number.  
 New MD5 hash ≠ old MD5 hash → record routed to **UPDATE**.
 
 ---
 
-## ✅ Target Data (After Mapping Execution)
+##  Target Data (After Mapping Execution)
 
 | CUSTOMER_ID | CUSTOMER_NAME | EMAIL              | PHONE          | CITY  | HASH_UPDATED |
 |--------------|----------------|--------------------|----------------|-------|---------------|
@@ -96,7 +96,7 @@ New MD5 hash ≠ old MD5 hash → record routed to **UPDATE**.
 
 ---
 
-## 💡 Outcome
+##  Outcome
 ✅ **MD5 hash detects changes** — no need for multiple column-by-column comparisons.  
 ✅ **Only changed record (101)** is updated; unchanged rows remain intact.  
 ✅ **SCD Type 1 behavior** — data is overwritten (no version history).  
@@ -104,7 +104,7 @@ New MD5 hash ≠ old MD5 hash → record routed to **UPDATE**.
 
 ---
 
-## 🧠 Key Takeaway
+##  Key Takeaway
 This dataset helps recruiters visualize how **MD5-based SCD Type 1 mapping** keeps the dimen
 
 ### MD5 Expression (Example)
