@@ -47,17 +47,6 @@ You can download the Informatica mapping export file (.zip) from the link below:
 
 ---
 
-### MD5 Expression (Example)
-
-```text
-MD5(
-  UPPER(TRIM(CUST_NAME)) ||
-  UPPER(TRIM(EMAIL)) ||
-  TRIM(PHONE) ||
-  UPPER(TRIM(ADDRESS1)) ||
-  UPPER(TRIM(CITY))
-)
-
 # 📊 Sample Dataset – SCD Type 1 (MD5 Hash Comparison)
 
 ### Purpose
@@ -116,5 +105,17 @@ New MD5 hash ≠ old MD5 hash → record routed to **UPDATE**.
 ---
 
 ## 🧠 Key Takeaway
-This dataset helps recruiters visualize how **MD5-based SCD Type 1 mapping** keeps the dimension table updated efficiently —  
+This dataset helps recruiters visualize how **MD5-based SCD Type 1 mapping** keeps the dimen
+
+### MD5 Expression (Example)
+
+```text
+MD5(
+  UPPER(TRIM(CUST_NAME)) ||
+  UPPER(TRIM(EMAIL)) ||
+  TRIM(PHONE) ||
+  UPPER(TRIM(ADDRESS1)) ||
+  UPPER(TRIM(CITY))
+)
+sion table updated efficiently —  
 ideal for **real-time ETL pipelines**, **incremental loads**, and **data warehouse synchronization**.
