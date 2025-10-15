@@ -1,5 +1,13 @@
 # 🧩 SCD Type 2 (Flag Method) — Informatica IICS
 
+This mapping implements a **Slowly Changing Dimension (SCD) Type 2 — Flag Method** to maintain historical customer data using simple *Active (1)* and *Inactive (0)* flags instead of effective dates.  
+Whenever a customer record changes, the previous version is updated with `Active_Flag = 0`, and a new record version is inserted with `Active_Flag = 1`.
+
+The mapping uses a combination of **Expression**, **Lookup**, **Router**, and **Sequence Generator** transformations to identify *new*, *changed*, and *unchanged* records efficiently.  
+It is a lightweight and high-performance alternative to the date-based SCD2 logic, ensuring easy auditability and minimal complexity for dimensional data tracking.
+
+---
+
 ## 🎯 Business Objective
 To maintain **historical records** of customer data changes using an **Active/Inactive Flag** approach.  
 This mapping ensures every change in customer data is tracked by marking the current record as active (`Active_Flag = 1`) and expiring the old record (`Active_Flag = 0`).
@@ -169,3 +177,18 @@ To determine if the incoming customer record already exists and whether the deta
 
 yaml
 Copy code
+
+---
+
+## 👤 Author
+**Shashi Kant**  
+ETL Developer | Informatica IICS | Oracle PL/SQL | Snowflake  
+📧 shashikant.dev.informatica@gmail.com  
+🌐 [GitHub Portfolio](https://github.com/s-h-a-s-h-i-k-a-n-t/iics-projects-portfolio)
+
+---
+
+### 🧾 Summary
+This mapping implements a **real-world SCD Type 2 (Flag Method)** using Informatica IICS.  
+It provides an efficient mechanism for tracking data changes through simple **Active/Inactive flags**,  
+offering faster lookups, minimal storage use, and clean audit trails for all customer history.
