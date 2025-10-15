@@ -1,34 +1,25 @@
 # 🧩 SCD Type 2 (Flag Method) — Informatica IICS
 
-This mapping implements a **Slowly Changing Dimension (SCD) Type 2 — Flag Method** to maintain historical customer data using simple *Active (1)* and *Inactive (0)* flags instead of effective dates.  
-Whenever a customer record changes, the previous version is updated with `Active_Flag = 0`, and a new record version is inserted with `Active_Flag = 1`.
-
-The mapping uses a combination of **Expression**, **Lookup**, **Router**, and **Sequence Generator** transformations to identify *new*, *changed*, and *unchanged* records efficiently.  
-It is a lightweight and high-performance alternative to the date-based SCD2 logic, ensuring easy auditability and minimal complexity for dimensional data tracking.
-
----
-
 ## 🎯 Business Objective
-To maintain **historical records** of customer data changes using an **Active/Inactive Flag** approach.  
-This mapping ensures every change in customer data is tracked by marking the current record as active (`Active_Flag = 1`) and expiring the old record (`Active_Flag = 0`).
+This mapping implements **Slowly Changing Dimension Type 2 (Flag Method)** to maintain a **complete change history** of customer records.  
+Instead of using date ranges, this method uses simple **Active (1)** and **Inactive (0)** flags to identify current vs. expired records in the target dimension.
+
+It helps business users track how a customer’s profile evolved over time while keeping the latest version active.
 
 ---
 
-## ⚙️ Mapping Details
-
-| Parameter | Description |
-|------------|-------------|
-| **Mapping Name** | `m_SCD_Type2_Flag` |
-| **SCD Type** | Type 2 (Flag Method) |
-| **Source Table** | `HR.S_CUSTOMER_SCD` |
-| **Target Table** | `CORE.T_CUSTOMER_SCD_FLAG` |
-| **Primary Key** | `CUSTOMER_ID` |
-| **Surrogate Key** | `CUSTOMER_KEY` |
-| **Active Flag** | `1 = Active`, `0 = Inactive` |
+## ⚙️ Mapping Overview
+**Mapping Name:** `m_SCD_Type2_Flag`  
+**Type:** SCD Type 2 — Flag Method  
+**Source Table:** `HR.S_CUSTOMER_SCD`  
+**Target Table:** `CORE.T_CUSTOMER_SCD_FLAG`  
+**Keys Used:**  
+- **Primary Key:** `CUSTOMER_ID`  
+- **Surrogate Key:** `CUSTOMER_KEY`
 
 ---
 
-## 🧱 Workflow Overview
+## 🧱 Workflow Logic
 
 SRC_CUSTOMER_SNAPSHOT
 │
@@ -39,7 +30,7 @@ EXP_ACTIVE_INACTIVE_FLAG
 LKP_DIM_CUSTOMER_CURR
 │
 ▼
-RTR_SCD2_FLAG_CHANGE_DETECT ─────────────┬──────────────┬──────────────┐
+RTR_SCD2_FLAG_CHANGE_DETECT ─────┬────────────┬────────────┐
 │ │ │ │
 SEQ_CUSTOMER_SK_GEN TGT_DIM_CUSTOMER_INS_NEW TGT_DIM_CUSTOMER_INS_CHANGE TGT_DIM_CUSTOMER_UPD_EXPIRE
 
@@ -48,126 +39,75 @@ Copy code
 
 ---
 
-## 🔄 Transformation Details
+## 🔄 Transformation Summary
 
-### 🗂️ **1. Source — `SRC_CUSTOMER_SNAPSHOT`**
-- Reads active customer data from the source system.
-- **Connection:** `Oracle_Src`
-- **Object:** `HR.S_CUSTOMER_SCD`
-- **Key Fields:** `CUSTOMER_ID`, `FIRST_NAME`, `MOBILE`, `ADDRESS1`, `COUNTRY`, `ZIPCODE`
+### 1️⃣ Source — `SRC_CUSTOMER_SNAPSHOT`
+Reads active customer data from the **HR schema** (Oracle source).  
+The input snapshot represents the most recent extract of customer information.
 
 ---
 
-### ⚙️ **2. Expression — `EXP_ACTIVE_INACTIVE_FLAG`**
-- Adds two derived fields for flag logic.
+### 2️⃣ Expression — `EXP_ACTIVE_INACTIVE_FLAG`
+Adds two flag fields to identify record states:
+- `Active_Flag = 1` → Current valid record  
+- `Inactive_Flag = 0` → Expired record  
 
-| Field Name | Expression | Description |
-|-------------|-------------|--------------|
-| `o_Active_Flag` | `1` | Marks record as active. |
-| `o_Inactive_Flag` | `0` | Marks record as inactive (expired). |
-
----
-
-### 🔍 **3. Lookup — `LKP_DIM_CUSTOMER_CURR`**
-- Looks up the target dimension table `CORE.T_CUSTOMER_SCD_FLAG` to identify existing customers.
-
-| Property | Value |
-|-----------|--------|
-| **Connection** | `Oracle_Tgt` |
-| **Lookup Object** | `CORE.T_CUSTOMER_SCD_FLAG` |
-| **Multiple Matches** | Return Any Row |
-| **Join Condition** | `CUSTOMER_ID = src_CUSTOMER_ID` |
-
-**Purpose:**  
-To determine if the incoming customer record already exists and whether the details have changed.
+These flags are later used in target update logic to maintain the correct record status.
 
 ---
 
-### 🧭 **4. Router — `RTR_SCD2_FLAG_CHANGE_DETECT`**
-- Splits data into logical groups: **INSERT_NEW**, **UPDATE_CHANGE**, and **DEFAULT**.
-
-| Group Name | Condition | Description |
-|-------------|------------|--------------|
-| `INSERT_NEW` | `ISNULL(CUSTOMER_ID)` | Customer not present in target — insert as new record. |
-| `UPDATE_CHANGE` | `IIF(CUSTOMER_ID = src_CUSTOMER_ID AND (FIRST_NAME <> src_FIRST_NAME OR MOBILE <> src_MOBILE), TRUE, FALSE)` | Existing customer — data change detected, create new active version. |
-| `DEFAULT` | — | Optional pass-through for unchanged records. |
+### 3️⃣ Lookup — `LKP_DIM_CUSTOMER_CURR`
+Performs a lookup on the **target dimension table** (`CORE.T_CUSTOMER_SCD_FLAG`)  
+to check if the incoming record already exists.  
+It helps in identifying:
+- New customers  
+- Changed customers (based on business key & attribute comparison)
 
 ---
 
-### 🔢 **5. Sequence Generator — `SEQ_CUSTOMER_SK_GEN`**
-- Generates **surrogate keys** (`CUSTOMER_KEY`) for new or changed customer records.
-
-| Property | Value |
-|-----------|--------|
-| **Start Value** | 1 |
-| **Increment By** | 1 |
-| **Connected To** | All Insert Targets |
+### 4️⃣ Router — `RTR_SCD2_FLAG_CHANGE_DETECT`
+Splits the data into three routes:
+- **INSERT_NEW:** For customers not existing in target (new entries)  
+- **UPDATE_CHANGE:** For customers whose attributes have changed  
+- **DEFAULT:** For unchanged records (ignored downstream)
 
 ---
 
-### 🎯 **6. Target — `TGT_DIM_CUSTOMER_INS_NEW`**
-- Inserts new customer records not found in the dimension table.
-
-| Column | Mapped From |
-|---------|-------------|
-| `CUSTOMER_KEY` | `NEXTVAL` |
-| `CUSTOMER_ID` | `src_CUSTOMER_ID` |
-| `FIRST_NAME` | `src_FIRST_NAME` |
-| `MOBILE` | `src_MOBILE` |
-| `ADDRESS1` | `src_ADDRESS1` |
-| `ZIPCODE` | `src_ZIPCODE` |
-| `COUNTRY` | `src_COUNTRY` |
-| `FLAG` | `o_Active_Flag` |
+### 5️⃣ Sequence Generator — `SEQ_CUSTOMER_SK_GEN`
+Generates surrogate keys (`CUSTOMER_KEY`) for new and changed records.  
+This ensures each version of the same customer has a **unique dimension key**.
 
 ---
 
-### 🎯 **7. Target — `TGT_DIM_CUSTOMER_INS_CHANGE`**
-- Inserts a **new version** of existing customers whose data has changed.
+### 6️⃣ Target — Dimension Table
+Three write paths handle insert and update operations:
 
-| Column | Mapped From |
-|---------|-------------|
-| `CUSTOMER_KEY` | `NEXTVAL` |
-| `CUSTOMER_ID` | `src_CUSTOMER_ID` |
-| `FIRST_NAME` | `src_FIRST_NAME` |
-| `MOBILE` | `src_MOBILE` |
-| `ADDRESS1` | `src_ADDRESS1` |
-| `ZIPCODE` | `src_ZIPCODE` |
-| `COUNTRY` | `src_COUNTRY` |
-| `FLAG` | `o_Active_Flag` |
+- **`TGT_DIM_CUSTOMER_INS_NEW`** → Inserts brand-new customer records.  
+- **`TGT_DIM_CUSTOMER_INS_CHANGE`** → Inserts a new active version for changed customers.  
+- **`TGT_DIM_CUSTOMER_UPD_EXPIRE`** → Updates the previous version, marking it inactive.
 
 ---
 
-### 🧱 **8. Target — `TGT_DIM_CUSTOMER_UPD_EXPIRE`**
-- Updates old record versions, marking them as inactive.
+## 🧮 Example Scenario
 
-| Column | Mapped From |
-|---------|-------------|
-| `CUSTOMER_KEY` | `CUSTOMER_KEY` |
-| `CUSTOMER_ID` | `CUSTOMER_ID` |
-| `FLAG` | `o_Inactive_Flag` |
-
----
-
-## 🧮 Sample Output
-
-| CUSTOMER_KEY | CUSTOMER_ID | FIRST_NAME | MOBILE | FLAG | Remarks |
-|---------------|--------------|-------------|---------|--------|----------|
-| 1001 | 101 | John | 9001 | 1 | Active record |
-| 1002 | 101 | John | 8001 | 0 | Old record (expired) |
-| 1003 | 102 | Tina | 7001 | 1 | Active record |
+| Step | Action | Active_Flag | Remarks |
+|------|---------|--------------|----------|
+| 1 | First time customer `101` appears | 1 | New record inserted |
+| 2 | Customer `101` changes phone number | 0 / 1 | Old record flagged inactive; new version inserted |
+| 3 | No change detected in next load | 1 | Only active record retained |
 
 ---
 
-## 🌟 Highlights
-✅ Implements **SCD Type 2 (Flag Method)** for maintaining historical data.  
-✅ Uses **Active/Inactive flags** instead of date ranges.  
-✅ Follows **industry-standard naming conventions**.  
-✅ Generates **surrogate keys** via sequence generator.  
-✅ Works seamlessly across **Customer, Product, or Vendor** dimensions.
+## 🌟 Key Highlights
+✅ Simplified **flag-based SCD tracking** (no date fields).  
+✅ Works efficiently for **large-volume incremental loads**.  
+✅ **Industry-standard naming** for all transformations.  
+✅ Compatible with other dimensions (e.g., Product, Vendor, Region).  
+✅ Lightweight, fast, and easy to maintain.
 
 ---
 
-## 🗂️ Folder Structure Example
+## 🗂 Folder Example
 /CDI/SCD_Type2_Flag/
 │
 ├── m_SCD_Type2_Flag.png
@@ -189,6 +129,6 @@ ETL Developer | Informatica IICS | Oracle PL/SQL | Snowflake
 ---
 
 ### 🧾 Summary
-This mapping implements a **real-world SCD Type 2 (Flag Method)** using Informatica IICS.  
-It provides an efficient mechanism for tracking data changes through simple **Active/Inactive flags**,  
-offering faster lookups, minimal storage use, and clean audit trails for all customer history.
+This mapping demonstrates a **real-world SCD Type 2 implementation** using the **Flag Method**.  
+It’s ideal for systems that prefer minimal date handling while maintaining full change traceability.  
+Designed with clear logic, reusability, and easy debugging in mind — perfect for enterprise-grade ETL pipelines.
