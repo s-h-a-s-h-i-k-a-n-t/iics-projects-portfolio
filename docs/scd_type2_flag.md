@@ -115,8 +115,6 @@ Three write paths handle insert and update operations:
 ├── README.md
 └── sample_input_output.xlsx
 
-yaml
-Copy code
 
 ---
 
