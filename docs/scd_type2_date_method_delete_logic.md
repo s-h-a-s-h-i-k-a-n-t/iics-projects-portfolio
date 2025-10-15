@@ -1,6 +1,6 @@
-# 📊 SCD Type 2 (Date Method with Delete Logic) — Informatica IICS
+#  SCD Type 2 (Date Method with Delete Logic) — Informatica IICS
 
-## 🎯 Business Objective
+##  Business Objective
 To maintain **historical customer data** in the data warehouse with proper handling of:
 - **New records** (insert)
 - **Changed records** (expire old + insert new)
@@ -10,7 +10,7 @@ This mapping ensures every change in customer data is **tracked over time** usin
 
 ---
 
-## 🧱 Mapping Details
+##  Mapping Details
 **Mapping Name:** `m_SCD_Type_2_Date_method_delete_logic`  
 **SCD Type:** Type 2 (Date Method)  
 **Source Table:** `HR.S_CUSTOMER_SCD`  
@@ -18,7 +18,7 @@ This mapping ensures every change in customer data is **tracked over time** usin
 
 ---
 
-## ⚙️ Workflow Overview
+##  Workflow Overview
 SRC_CUSTOMER_SNAPSHOT ─┐
 │
 ▼
@@ -37,7 +37,7 @@ RTR_SCD2_CHANGE_DELETE_DETECT
 
 ---
 
-## 🧩 Transformation Logic
+##  Transformation Logic
 
 ### 🔹 Source – `SRC_CUSTOMER_SNAPSHOT`
 - Fetches active customer data from the source.
@@ -94,7 +94,7 @@ Used by `new_insert` and `upd_insert` targets.
 
 ---
 
-## 🧾 Target Definitions
+##  Target Definitions
 
 | Target Name | Operation | Purpose |
 |--------------|------------|----------|
@@ -105,7 +105,7 @@ Used by `new_insert` and `upd_insert` targets.
 
 ---
 
-## 🧠 Sample Output
+##  Sample Output
 
 | CUSTOMER_KEY | CUSTOMER_ID | NAME | MOBILE | EFF_DATE | END_DATE | IS_CURRENT | DELETE_FLAG |
 |---------------|--------------|------|---------|-----------|-----------|-------------|--------------|
@@ -116,7 +116,7 @@ Used by `new_insert` and `upd_insert` targets.
 
 ---
 
-## 🧠 Highlights
+##  Highlights
 ✅ Combines **SCD Type 2** + **Soft Delete** logic  
 ✅ Ensures **full history tracking** using `EFF_DATE` and `END_DATE`  
 ✅ Generates surrogate keys using sequence  
@@ -125,7 +125,7 @@ Used by `new_insert` and `upd_insert` targets.
 
 ---
 
-## 📁 Folder Structure Example
+##  Folder Structure Example
 
 
 /CDI/SCD_Type_2_Date_Method_Delete_Logic/
@@ -138,14 +138,6 @@ Used by `new_insert` and `upd_insert` targets.
 
 ---
 
-## 👨‍💼 Author
-**Shashi Kant**  
-ETL Developer | Informatica IICS | Oracle PL/SQL | Snowflake  
-📧 shashikant.dev.informatica@gmail.com  
-🔗 [GitHub Portfolio](https://github.com/s-h-a-s-h-i-k-a-n-t/iics-projects-portfolio)
-
----
-
-### 🏁 Summary
+###  Summary
 > This mapping implements a **real-world Slowly Changing Dimension Type 2 (Date Method)** with built-in delete detection and surrogate key generation in Informatica IICS.  
 It ensures **data accuracy, history preservation, and clean auditability** — making it enterprise-ready.
