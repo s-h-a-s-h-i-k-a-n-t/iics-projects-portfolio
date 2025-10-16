@@ -1,15 +1,15 @@
 # Mapping: m_SCD_Type2_Date_MD5
 
-## 🧾 Note
+![SCD Type 2 Date Method MD5 Mapping](../images/m_SCD_Type2_Date_MD5.png)
 
-This mapping was **built and tested by Shashi Kant** in the Informatica IICS environment using an Oracle target connection.  
+## 🧾 Note
+This mapping was built and tested by **Shashi Kant** in the Informatica IICS environment using an Oracle target connection.  
 It demonstrates how **MD5-based change detection** combined with **date-based SCD logic** efficiently tracks historical changes in dimension tables.  
 The goal is to maintain full history for changed records by inserting new versions and expiring old ones using **Start Date / End Date** columns.
 
 ---
 
 ## 🎯 Objective
-
 Implement **Slowly Changing Dimension (SCD) Type 2** using the **Date Method** and **MD5 hashing** to:
 - Detect changes in source records via MD5 comparison.
 - Insert new version rows when changes occur.
@@ -18,7 +18,6 @@ Implement **Slowly Changing Dimension (SCD) Type 2** using the **Date Method** a
 ---
 
 ## 🧩 Design Overview
-
 ### 🔄 Pipeline Flow
 ```
 SRC_CUSTOMER_SNAPSHOT
@@ -36,7 +35,6 @@ RTR_SCD2_CHANGE_DETECT
 ---
 
 ## 🧱 Transformation Details
-
 | Component | Description / Logic |
 |------------|--------------------|
 | **SRC_CUSTOMER_SNAPSHOT** | Reads the latest customer snapshot from the source/staging system. |
@@ -51,7 +49,6 @@ RTR_SCD2_CHANGE_DETECT
 ---
 
 ## 🧮 Router Groups and Conditions
-
 | Group Name | Condition | Purpose |
 |-------------|------------|----------|
 | `NEW_INSERT` | `ISNULL(CUSTOMER_ID)` | New record → Insert fresh row. |
@@ -61,7 +58,6 @@ RTR_SCD2_CHANGE_DETECT
 ---
 
 ## 🧠 MD5 Expression Example
-
 ```sql
 MD5(
   UPPER(TRIM(CUSTOMER_ID)) ||
@@ -77,7 +73,6 @@ This expression ensures that even a single attribute change (like address, mobil
 ---
 
 ## 🧾 Sample Dataset (Simplified Example)
-
 ### Source Data (Incoming Records)
 | CUSTOMER_ID | FIRST_NAME | MOBILE | ADDRESS1 | COUNTRY | ZIPCODE |
 |--------------|-------------|----------|-----------|----------|----------|
@@ -102,7 +97,6 @@ New MD5 ≠ Old MD5 → triggers Type 2 insert.
 ---
 
 ## ✅ Outcome
-
 - **MD5 hash detects changes efficiently.**
 - **SCD Type 2 logic** ensures old records are retained with proper end dates.
 - **No redundant updates** — only changed records are processed.
@@ -111,7 +105,6 @@ New MD5 ≠ Old MD5 → triggers Type 2 insert.
 ---
 
 ## 💡 Key Takeaway
-
 This mapping demonstrates **real-world SCD Type 2 logic** using:
 - **MD5 for change detection**
 - **Date-based versioning (EFF_DATE/END_DATE)**
@@ -122,7 +115,6 @@ This is a best-practice design for **data warehouse dimension history management
 ---
 
 ## 📦 Export File
-
 You can download the Informatica mapping export file (`.zip`) from the repo:
 
 👉 [Download Mapping Export (ZIP)](../jobs_exports/m_SCD_Type2_Date_MD5.zip)
