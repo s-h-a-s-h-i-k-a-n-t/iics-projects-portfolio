@@ -1,7 +1,7 @@
 # Mapping: m_SCD_Type2_Date_MD5
 
 ## Note
-This mapping was **built and tested by me, (Shashi Kant**) in the Informatica IICS environment using an Oracle target connection.  
+This mapping was **built and tested by me(Shashi Kant**), in the Informatica IICS environment using an Oracle target connection.  
 It demonstrates how **MD5-based change detection** combined with **date-based SCD logic** efficiently tracks historical changes in dimension tables.  
 The goal is to maintain full history for changed records by inserting new versions and expiring old ones using **Start Date / End Date** columns.
 
