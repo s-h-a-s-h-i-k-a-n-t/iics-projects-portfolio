@@ -53,7 +53,7 @@ This taskflow performs *change detection*, *conditional execution*, *retry handl
 
 | Asset | File Name | Export Timestamp | Exported On (IST) |
 |--------|------------|------------------|------------------|
-| Taskflow | `tf_dimension_loads-1760639741312.zip` | `1760639741312` | 🗓 **Oct 17, 2025 – 8:45 PM IST** |
+| Taskflow | `tf_dimension_loads-1760639741312.zip` | `1760639741312` |  **Oct 17, 2025 – 8:45 PM IST** |
 
 ---
 
