@@ -3,8 +3,8 @@
 ![Taskflow Screenshot](https://github.com/s-h-a-s-h-i-k-a-n-t/iics-projects-portfolio/blob/main/CDI/taskflows/tf_dimension_loads.png)
 
 ## Objective
-Automate the **Dimension Load process** using **SCD Type 2 (Date + MD5)** logic in Informatica IICS.  
-This taskflow performs *change detection*, *conditional execution*, *retry handling*, and *notifications* to ensure efficient and reliable dimension table updates.
+Automate the Dimension Load process using SCD Type 2 (Date + MD5) logic in Informatica IICS.  
+This taskflow performs change detection, conditional execution, retry handling, and notifications to ensure efficient and reliable dimension table updates.
 
 ---
 
@@ -14,18 +14,18 @@ This taskflow performs *change detection*, *conditional execution*, *retry handl
 |------|------------|--------------|
 | 1 | **Start** | Entry point of the taskflow execution. |
 | 2 | **Data Task – `dt_Load_Dimension_Staging`** | Runs the mapping `m_data_availability` to verify if source or staging data is available for processing. |
-| 3 | **Decision – `dec_Check_Snapshot_Count`** | Evaluates whether new or changed data exists (e.g., record count ≥ 1). |
+| 3 | **Decision – `dec_Check_Snapshot_Count`** | Evaluates whether new or changed data exists in the snapshot (e.g., record count ≥ 1). |
 | 4 | **Notification – `ntf_Change_Detected_Alert`** | Sends an email notification confirming that changes are detected. |
 | 5 | **Mapping Task – `mt_SCD2_Date_MD5_Process`** | Executes mapping `m_SCD_Type2_Date_MD5` to handle historical data tracking using MD5 comparison and date-based logic (Start_Date, End_Date, Is_Active). |
 | 6 | **Mapping Task – `mt_SCD2_Flag_Update`** | Executes mapping `m_SCD_Type2_Flag` to update active/inactive flags after new record insertion. |
 | 7 | **Sub-Taskflow – `tf_Load_Fact_Orchestration`** | Triggers the sub-taskflow (`tf_single_task`) to orchestrate dependent loads like `m_Load_every_4th_record` or downstream facts. |
 | 8 | **Assignment – `asg_Set_Default_Counters`** | Initializes retry counters and default variables when no new data is detected. |
 | 9 | **Notification – `ntf_No_Change_Alert`** | Sends a message notifying that no change was detected in the source. |
-| 10 | **Decision – `dec_Check_Retry_Count`** | Compares retry attempts with a limit (e.g., `< 4`). |
+| 10 | **Decision – `dec_Check_Retry_Count`** | Compares retry attempts with a limit (e.g., < 4). |
 | 11 | **Wait – `wait_Retry_Interval_5min`** | Waits for a defined duration (e.g., 5 minutes) before retrying. |
 | 12 | **Notification – `ntf_Retry_Limit_Reached`** | Sends a final alert when retry limit is reached. |
 | 13 | **Throw – `throw_Abort_Dimension_Load`** | Aborts the taskflow gracefully if maximum retries exceeded. |
-|  | **End** | Indicates successful or controlled completion. |
+|   | **End** | Indicates successful or controlled completion. |
 
 ---
 
