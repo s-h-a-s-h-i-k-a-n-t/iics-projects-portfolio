@@ -118,7 +118,8 @@ This is a best-practice design for **data warehouse dimension history management
 ## Export File
 You can download the Informatica mapping export file (`.zip`) from the repo:
 
-👉 [Download Mapping Export (ZIP)](../jobs_exports/m_SCD_Type2_Date_MD5.zip)
+👉 [Download Mapping Export (ZIP)](https://github.com/s-h-a-s-h-i-k-a-n-t/iics-projects-portfolio/raw/main/jobs_exports/m_SCD_Type2_Date_MD5-1760598422694.zip)
+
 
 ---
 
