@@ -34,16 +34,33 @@ Implement **Slowly Changing Dimension (SCD) Type 2** using the **Date Method** a
 ---
 
 ## Transformation Details
+
 | Component | Description / Logic |
-|------------|--------------------|
+|---|---|
 | **SRC_CUSTOMER_SNAPSHOT** | Reads the latest customer snapshot from the source/staging system. |
-| **EXP_GEN_MD5_AND_DATES** | Generates MD5 hash and initializes `EFF_DATE`, `END_DATE`, and `IS_ACTIVE`. <br> **Expressions:** <br>• `o_in_eff_date = SYSDATE` <br>• `o_in_end_date = TO_DATE('12/31/9999','MM/DD/YYYY')` <br>• `o_in_MD5 = MD5(CUSTOMER_ID || FIRST_NAME || MOBILE || ADDRESS1 || ZIPCODE || COUNTRY)` |
+| **EXP_GEN_MD5_AND_DATES** | Initializes `EFF_DATE`, `END_DATE`, `IS_ACTIVE` and computes change-detection `MD5`. See **Expressions** below. |
 | **LKP_DIM_CUSTOMER_TARGET** | Looks up target table (`CORE.T_CUSTOMER_SCD_DATE_MD5`) by `CUSTOMER_ID` to fetch existing record details (old MD5, surrogate key, end date). |
-| **RTR_SCD2_CHANGE_DETECT** | Splits the data flow: <br>• **NEW_INSERT:** record not found in target (`ISNULL(CUSTOMER_ID)`) <br>• **UPD_INSERT:** record exists but MD5 mismatch (`src_o_in_MD5 <> MD5`) <br>• **UPD_UPDATE:** expire old record (set `END_DATE = SYSDATE`, `IS_ACTIVE = 0`). |
+| **RTR_SCD2_CHANGE_DETECT** | Routes: **NEW_INSERT** (not found), **UPD_INSERT** (MD5 mismatch), **UPD_UPDATE** (expire old row). |
 | **SEQ_DIM_CUSTOMER_KEY** | Generates surrogate key (`CUSTOMER_KEY = NEXTVAL`). |
 | **TGT_DIM_CUSTOMER_NEW_INSERT** | Inserts brand new customers. |
 | **TGT_DIM_CUSTOMER_UPD_INSERT** | Inserts new version row for changed customers (Type-2 insert). |
-| **TGT_DIM_CUSTOMER_UPD_UPDATE** | Updates existing version — expires it by setting `END_DATE = SYSDATE`. |
+| **TGT_DIM_CUSTOMER_UPD_UPDATE** | Expires previous version (`END_DATE = SYSDATE`, `IS_ACTIVE = 0`). |
+
+### Expressions (for `EXP_GEN_MD5_AND_DATES`)
+```sql
+-- Effective and End dates
+o_in_eff_date = SYSDATE
+o_in_end_date = TO_DATE('12/31/9999','MM/DD/YYYY')
+
+-- Change detection hash
+o_in_MD5 = MD5(
+  UPPER(TRIM(CUSTOMER_ID)) ||
+  UPPER(TRIM(FIRST_NAME))  ||
+  TRIM(MOBILE)             ||
+  UPPER(TRIM(ADDRESS1))    ||
+  TRIM(ZIPCODE)            ||
+  UPPER(TRIM(COUNTRY))
+)
 
 ---
 
