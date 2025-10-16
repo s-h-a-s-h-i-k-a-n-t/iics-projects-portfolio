@@ -1,6 +1,6 @@
 # Mapping: m_SCD_Type2_Date_MD5
 
-![SCD Type 2 Date Method MD5 Mapping](../images/m_SCD_Type2_Date_MD5.png)
+![SCD Type 2 Date Method MD5 Mapping](https://github.com/s-h-a-s-h-i-k-a-n-t/iics-projects-portfolio/blob/main/CDI/mappings/m_SCD_Type2_Date_MD5.png)
 
 ## 🧾 Note
 This mapping was built and tested by **Shashi Kant** in the Informatica IICS environment using an Oracle target connection.  
