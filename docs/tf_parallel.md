@@ -59,25 +59,6 @@ This taskflow showcases how to **reduce overall execution time** using parallel 
 
 ---
 
-## Folder Location
-
-```
-iics-projects-portfolio/
- └── CDI/
-     ├── mappings/
-     │   ├── mct_m_SCD_Type2_Date_MD5.zip
-     │   ├── mct_m_SCD_Type2_Flag.zip
-     │   ├── mtt_PowerCenter_Task.zip
-     │   └── mtt_Load_4th_record.zip
-     ├── taskflows/
-     │   ├── tf_parallel.png
-     │   └── tf_parallel.md
-     └── jobs_exports/
-         └── tf_parallel-17607314745360.zip
-```
-
----
-
 ## Summary
 The `tf_parallel` taskflow demonstrates a **multi-branch orchestration pattern** — executing multiple mappings in parallel, validating outcomes via a decision step, and sending success or failure notifications.  
 This design is ideal for enterprise ETL workflows requiring **parallel loading** and **conditional sequencing** in Informatica IICS.
