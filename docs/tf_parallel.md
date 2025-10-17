@@ -49,11 +49,7 @@ This taskflow showcases how to **reduce overall execution time** using parallel 
 
 ---
 
-## Export Information
-
-| Asset | File Name | Export Timestamp | Exported On (IST) |
-|--------|------------|------------------|-------------------|
-| Taskflow | `tf_parallel-17607314745360.zip` | `17607314745360` | **Oct 18, 2025 – 3:51 AM IST** |
+## Download Taskflow Export
 
 [Download Taskflow Export (ZIP)](https://raw.githubusercontent.com/s-h-a-s-h-i-k-a-n-t/iics-projects-portfolio/main/CDI/jobs_exports/tf_parallel-17607314745360.zip)
 
