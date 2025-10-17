@@ -78,6 +78,43 @@ iics-projects-portfolio/
 
 ---
 
+## Sample Dataset
+
+Download sample input snapshots:
+- [Day 1 snapshot – `customer_source_day1.csv`](../datasets/customer_source_day1.csv)
+- [Day 2 snapshot – `customer_source_day2.csv`](../datasets/customer_source_day2.csv)
+
+### Day 1 – `customer_source_day1.csv`
+```csv
+CUSTOMER_ID,CUSTOMER_NAME,CITY,EMAIL,LOAD_DATE
+101,Rahul Mehta,Mumbai,rahul.m@example.com,2025-10-15
+102,Sneha Iyer,Pune,sneha.iyer@example.com,2025-10-15
+103,Rajiv Soni,Delhi,rajiv.soni@example.com,2025-10-15
+```
+
+### Day 2 – `customer_source_day2.csv`
+```csv
+CUSTOMER_ID,CUSTOMER_NAME,CITY,EMAIL,LOAD_DATE
+101,Rahul Mehta,Bangalore,rahul.m@example.com,2025-10-16
+102,Sneha Iyer,Pune,sneha.iyer@example.com,2025-10-16
+103,Rajiv Soni,Delhi,rajiv.soni@example.com,2025-10-16
+```
+
+### Expected Target After Taskflow Run (SCD2)
+
+| DIM_KEY | CUSTOMER_ID | CUSTOMER_NAME | CITY       | EMAIL                    | START_DATE | END_DATE   | IS_ACTIVE |
+|--------:|-------------:|---------------|-----------|--------------------------|------------|------------|----------:|
+| 1       | 101          | Rahul Mehta   | Mumbai    | rahul.m@example.com      | 2025-10-15 | 2025-10-16 | 0         |
+| 4       | 101          | Rahul Mehta   | Bangalore | rahul.m@example.com      | 2025-10-16 | 9999-12-31 | 1         |
+| 2       | 102          | Sneha Iyer    | Pune      | sneha.iyer@example.com   | 2025-10-15 | 9999-12-31 | 1         |
+| 3       | 103          | Rajiv Soni    | Delhi     | rajiv.soni@example.com   | 2025-10-15 | 9999-12-31 | 1         |
+
+**Notes:**
+- `mt_SCD2_Date_MD5_Process` detects the change in CITY for CUSTOMER_ID = 101 and inserts a new version.
+- `mt_SCD2_Flag_Update` inactivates the old version (IS_ACTIVE = 0, END_DATE set to the change date).
+
+---
+
 ## Summary
 
 The `tf_dimension_loads` taskflow is the controller for your entire dimension load pipeline.  
