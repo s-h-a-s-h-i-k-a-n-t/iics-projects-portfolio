@@ -1,12 +1,13 @@
 # Taskflow: `tf_parallel`
 
-![Taskflow Screenshot](https://github.com/s-h-a-s-h-i-k-a-n-t/iics-projects-portfolio/blob/main/CDI/taskflows/tf_parallel.png)
-
----
-
 ## Objective
 Demonstrate **parallel task orchestration** in Informatica IICS where multiple mappings execute simultaneously.  
 This taskflow showcases how to **reduce overall execution time** using parallel branches while maintaining control through **decisions** and **notifications**.
+
+---
+
+## Taskflow Screenshot
+![tf_parallel](https://github.com/s-h-a-s-h-i-k-a-n-t/iics-projects-portfolio/blob/main/CDI/taskflows/tf_parallel.png)
 
 ---
 
@@ -78,11 +79,10 @@ iics-projects-portfolio/
 ---
 
 ## Summary
-`tf_parallel` demonstrates a **multi-branch orchestration** pattern — executing multiple mappings in parallel, validating their outcomes via a decision step, and sending success or failure notifications.  
-This taskflow is highly suitable for enterprise ETL processes that require **parallel loading** and **conditional sequencing** in Informatica IICS.
+The `tf_parallel` taskflow demonstrates a **multi-branch orchestration pattern** — executing multiple mappings in parallel, validating outcomes via a decision step, and sending success or failure notifications.  
+This design is ideal for enterprise ETL workflows requiring **parallel loading** and **conditional sequencing** in Informatica IICS.
 
 ---
 
 ✅ **Outcome:**  
-A **parallelized, event-driven taskflow** template that speeds up execution and integrates monitoring logic for production-grade orchestration.
-
+A **parallelized, event-driven taskflow template** that speeds up execution and integrates notification logic for production-grade orchestration.
