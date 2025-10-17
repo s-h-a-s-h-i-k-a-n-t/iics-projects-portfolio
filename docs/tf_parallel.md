@@ -6,8 +6,9 @@ This taskflow showcases how to **reduce overall execution time** using parallel 
 
 ---
 
-## Taskflow Screenshot
-![tf_parallel](https://github.com/s-h-a-s-h-i-k-a-n-t/iics-projects-portfolio/blob/main/CDI/taskflows/tf_parallel.png)
+## Download Taskflow Export
+[Download Taskflow Export (ZIP)](https://raw.githubusercontent.com/s-h-a-s-h-i-k-a-n-t/iics-projects-portfolio/main/jobs_exports/tf_parallel-1760731745360.zip)
+
 
 ---
 
