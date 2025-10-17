@@ -1,125 +1,105 @@
-# Taskflow: `tf_dimension_loads`
-
-![Taskflow Screenshot](https://github.com/s-h-a-s-h-i-k-a-n-t/iics-projects-portfolio/blob/main/CDI/taskflows/tf_dimension_loads.png)
+# Taskflow: tf_dimension_loads
 
 ## Objective
-Automate the Dimension Load process using SCD Type 2 (Date + MD5) logic in Informatica IICS.  
-This taskflow performs change detection, conditional execution, retry handling, and notifications to ensure efficient and reliable dimension table updates.
-
----
-
-## Functional Overview
-
-| Step | Component | Description |
-|------|------------|--------------|
-| 1 | **Start** | Entry point of the taskflow execution. |
-| 2 | **Data Task – `dt_Load_Dimension_Staging`** | Runs the mapping `m_data_availability` to verify if source or staging data is available for processing. |
-| 3 | **Decision – `dec_Check_Snapshot_Count`** | Evaluates whether new or changed data exists in the snapshot (e.g., record count ≥ 1). |
-| 4 | **Notification – `ntf_Change_Detected_Alert`** | Sends an email notification confirming that changes are detected. |
-| 5 | **Mapping Task – `mt_SCD2_Date_MD5_Process`** | Executes mapping `m_SCD_Type2_Date_MD5` to handle historical data tracking using MD5 comparison and date-based logic (Start_Date, End_Date, Is_Active). |
-| 6 | **Mapping Task – `mt_SCD2_Flag_Update`** | Executes mapping `m_SCD_Type2_Flag` to update active/inactive flags after new record insertion. |
-| 7 | **Sub-Taskflow – `tf_Load_Fact_Orchestration`** | Triggers the sub-taskflow (`tf_single_task`) to orchestrate dependent loads like `m_Load_every_4th_record` or downstream facts. |
-| 8 | **Assignment – `asg_Set_Default_Counters`** | Initializes retry counters and default variables when no new data is detected. |
-| 9 | **Notification – `ntf_No_Change_Alert`** | Sends a message notifying that no change was detected in the source. |
-| 10 | **Decision – `dec_Check_Retry_Count`** | Compares retry attempts with a limit (e.g., < 4). |
-| 11 | **Wait – `wait_Retry_Interval_5min`** | Waits for a defined duration (e.g., 5 minutes) before retrying. |
-| 12 | **Notification – `ntf_Retry_Limit_Reached`** | Sends a final alert when retry limit is reached. |
-| 13 | **Throw – `throw_Abort_Dimension_Load`** | Aborts the taskflow gracefully if maximum retries exceeded. |
-|   | **End** | Indicates successful or controlled completion. |
-
----
-
-## Design Highlights
-
-- Integrates multiple mappings: `m_data_availability`, `m_SCD_Type2_Date_MD5`, and `m_SCD_Type2_Flag`.
-- Uses MD5 hash comparison to detect record-level changes efficiently.
-- Maintains SCD Type 2 history with Start/End Dates and Active Flags.
-- Implements Retry Logic with wait intervals to handle transient failures.
-- Includes Notifications for every major event — success, no change, and failure.
-- Calls Sub-Taskflow for modular orchestration of dependent loads.
-
----
-
-## Related Assets
-
-| Type | Name | Purpose |
-|------|------|----------|
-| Mapping | `m_data_availability` | Checks data existence before triggering the dimension load. |
-| Mapping | `m_SCD_Type2_Date_MD5` | Performs MD5-based change detection and inserts historical versions. |
-| Mapping | `m_SCD_Type2_Flag` | Updates active/inactive status for SCD records. |
-| Taskflow | `tf_single_task` | Sub-taskflow used to demonstrate sequential mapping orchestration (e.g., `m_Load_every_4th_record`). |
-
----
-
-## Export Information
-
-| Asset | File Name | Export Timestamp | Exported On (IST) |
-|--------|------------|------------------|------------------|
-| Taskflow | [tf_dimension_loads-1760639741312.zip](https://github.com/s-h-a-s-h-i-k-a-n-t/iics-projects-portfolio/blob/main/CDI/jobs_exports/tf_dimension_loads-1760639741312.zip) | 1760639741312 | Oct 17, 2025 – 8:45 PM IST |
+Automate daily dimension loads using Slowly Changing Dimension Type-2 (SCD2) logic.  
+This taskflow orchestrates multiple mappings to detect data changes between daily snapshots,  
+expire old versions, and insert new versions while maintaining historical records.
 
 ---
 
 ## Folder Location
-
 ```
 iics-projects-portfolio/
- └── CDI/
-     ├── mappings/
-     │   ├── m_SCD_Type2_Date_MD5.zip
-     │   ├── m_SCD_Type2_Flag.zip
-     │   ├── m_data_availability.zip
-     │   └── m_Load_every_4th_record.zip
-     ├── taskflows/
-     │   ├── tf_dimension_loads.png
-     │   └── tf_dimension_loads.md
-     └── jobs_exports/
-         └── tf_dimension_loads-1760639741312.zip
+├── CDI/
+│   ├── mappings/
+│   │   ├── m_SCD_Type2_Date_MD5.zip
+│   │   ├── m_SCD_Type2_Flag.zip
+│   └── taskflows/
+│       └── tf_dimension_loads/
+│           ├── tf_dimension_loads.png
+│           └── tf_dimension_loads.zip
+└── docs/
+    └── tf_dimension_loads.md
 ```
+
+---
+
+## Taskflow Screenshot
+Below is the canvas view for this Taskflow:
+
+![tf_dimension_loads](../CDI/taskflows/tf_dimension_loads/tf_dimension_loads.png)
+
+---
+
+## Download Taskflow Export
+[Download Taskflow Export (ZIP)](../CDI/taskflows/tf_dimension_loads/tf_dimension_loads.zip)
+
+---
+
+## Step-by-Step Taskflow Logic
+
+| Step | Task Name | Type | Description |
+|------|------------|------|--------------|
+| 1 | Start | — | Initializes runtime parameters such as `$$RUN_DATE` |
+| 2 | dt_Load_Dimension_Staging | Data Task | Loads current snapshot into staging and checks record count |
+| 3 | dec_Check_Snapshot_Count | Decision | Verifies if snapshot has new or updated records |
+| 4 | ntf_Change_Detected_Alert | Notification | Sends alert when change is detected in source snapshot |
+| 5 | mt_SCD2_Date_MD5_Process | Mapping Task | Compares MD5 hash to detect data changes (Type-2 with start/end dates) |
+| 6 | mt_SCD2_Flag_Update | Mapping Task | Updates `IS_ACTIVE` flag to maintain current vs expired records |
+| 7 | Audit_Run_Summary (optional) | Mapping Task | Logs inserted, updated, and expired row counts |
+| 8 | End | — | Ends taskflow and clears runtime variables |
 
 ---
 
 ## Sample Dataset
 
-Download sample input snapshots:
-- [Day 1 snapshot – `customer_source_day1.csv`](../datasets/customer_source_day1.csv)
-- [Day 2 snapshot – `customer_source_day2.csv`](../datasets/customer_source_day2.csv)
-
-### Day 1 – `customer_source_day1.csv`
-```csv
-CUSTOMER_ID,CUSTOMER_NAME,CITY,EMAIL,LOAD_DATE
-101,Rahul Mehta,Mumbai,rahul.m@example.com,2025-10-15
-102,Sneha Iyer,Pune,sneha.iyer@example.com,2025-10-15
-103,Rajiv Soni,Delhi,rajiv.soni@example.com,2025-10-15
-```
-
-### Day 2 – `customer_source_day2.csv`
-```csv
-CUSTOMER_ID,CUSTOMER_NAME,CITY,EMAIL,LOAD_DATE
-101,Rahul Mehta,Bangalore,rahul.m@example.com,2025-10-16
-102,Sneha Iyer,Pune,sneha.iyer@example.com,2025-10-16
-103,Rajiv Soni,Delhi,rajiv.soni@example.com,2025-10-16
-```
-
-### Expected Target After Taskflow Run (SCD2)
-
-| DIM_KEY | CUSTOMER_ID | CUSTOMER_NAME | CITY       | EMAIL                    | START_DATE | END_DATE   | IS_ACTIVE |
-|--------:|-------------:|---------------|-----------|--------------------------|------------|------------|----------:|
-| 1       | 101          | Rahul Mehta   | Mumbai    | rahul.m@example.com      | 2025-10-15 | 2025-10-16 | 0         |
-| 4       | 101          | Rahul Mehta   | Bangalore | rahul.m@example.com      | 2025-10-16 | 9999-12-31 | 1         |
-| 2       | 102          | Sneha Iyer    | Pune      | sneha.iyer@example.com   | 2025-10-15 | 9999-12-31 | 1         |
-| 3       | 103          | Rajiv Soni    | Delhi     | rajiv.soni@example.com   | 2025-10-15 | 9999-12-31 | 1         |
-
-**Notes:**
-- `mt_SCD2_Date_MD5_Process` detects the change in CITY for CUSTOMER_ID = 101 and inserts a new version.
-- `mt_SCD2_Flag_Update` inactivates the old version (IS_ACTIVE = 0, END_DATE set to the change date).
+### Day-1 Snapshot
+| CUSTOMER_ID | CUSTOMER_NAME | CITY   | EMAIL                  | LOAD_DATE |
+|-------------:|---------------|--------|------------------------|------------|
+| 101 | Rahul Mehta | Mumbai | rahul.m@example.com | 2025-10-15 |
+| 102 | Sneha Iyer  | Pune   | sneha.iyer@example.com | 2025-10-15 |
+| 103 | Rajiv Soni  | Delhi  | rajiv.soni@example.com | 2025-10-15 |
 
 ---
 
-## Summary
+### Day-2 Snapshot
+| CUSTOMER_ID | CUSTOMER_NAME | CITY       | EMAIL                   | LOAD_DATE |
+|-------------:|---------------|------------|--------------------------|------------|
+| 101 | Rahul Mehta | Bangalore | rahul.m@example.com | 2025-10-16 |
+| 102 | Sneha Iyer  | Pune       | sneha.iyer@example.com | 2025-10-16 |
+| 103 | Rajiv Soni  | Delhi      | rajiv.soni@example.com | 2025-10-16 |
+| 104 | Neha Gupta  | Chennai    | neha.gupta@example.com | 2025-10-16 |
 
-The `tf_dimension_loads` taskflow is the controller for your entire dimension load pipeline.  
-It orchestrates multiple mappings to detect changes, load historical records, and update flags in dimension tables.  
-It further manages notification alerts, retries, and failure handling to ensure smooth and reliable orchestration.
+---
 
-Outcome:  
-A production-grade, fault-tolerant taskflow for dimension data management — integrating change detection, historical tracking, retry automation, and alerting in Informatica IICS.
+## Expected Target After Taskflow Run (SCD2)
+
+| DIM_KEY | CUSTOMER_ID | CUSTOMER_NAME | CITY      | EMAIL                   | START_DATE | END_DATE   | IS_ACTIVE |
+|---------:|-------------:|---------------|-----------|--------------------------|-------------|-------------|-----------:|
+| 1 | 101 | Rahul Mehta | Mumbai    | rahul.m@example.com     | 2025-10-15 | 2025-10-16 | 0 |
+| 2 | 101 | Rahul Mehta | Bangalore | rahul.m@example.com     | 2025-10-16 | 9999-12-31 | 1 |
+| 3 | 102 | Sneha Iyer  | Pune      | sneha.iyer@example.com  | 2025-10-15 | 9999-12-31 | 1 |
+| 4 | 103 | Rajiv Soni  | Delhi     | rajiv.soni@example.com  | 2025-10-15 | 9999-12-31 | 1 |
+| 5 | 104 | Neha Gupta  | Chennai   | neha.gupta@example.com  | 2025-10-16 | 9999-12-31 | 1 |
+
+---
+
+## Notes
+- Implements complete SCD Type-2 (Date + MD5) logic.  
+- Handles change detection, versioning, and historical preservation.  
+- Maintains `START_DATE`, `END_DATE`, and `IS_ACTIVE` for tracking active vs expired rows.  
+- Tested using Informatica IICS Cloud Data Integration with Oracle Target.  
+- Includes retry handling and notification branching for production readiness.
+
+---
+
+## Related Assets
+- Mappings:  
+  - `m_SCD_Type2_Date_MD5`  
+  - `m_SCD_Type2_Flag`  
+- Taskflow: `tf_dimension_loads`  
+- Target Table: `DIM_CUSTOMER`
+
+---
+
+© Shashi Kant — IICS Projects Portfolio
