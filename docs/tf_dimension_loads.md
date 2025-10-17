@@ -2,8 +2,7 @@
 
 ## Objective
 Automate daily dimension loads using **Slowly Changing Dimension Type-2 (SCD2)** logic.  
-This taskflow orchestrates multiple mappings that detect data changes between daily snapshots,  
-expire old versions, and insert new versions while maintaining historical records.
+This taskflow orchestrates mappings that detect changes between daily snapshots, expire old versions, and insert new versions while maintaining history.
 
 ---
 
@@ -13,11 +12,7 @@ expire old versions, and insert new versions while maintaining historical record
 ---
 
 ## Download Taskflow Export
-[Download Taskflow Export (ZIP)](/jobs_exports/tf_dimension_loads-1760639743112.zip)
-
-
-
-
+[Download Taskflow Export (ZIP)](https://raw.githubusercontent.com/s-h-a-s-h-i-k-a-n-t/iics-projects-portfolio/main/jobs_exports/tf_dimension_loads-1760639743112.zip)
 
 ---
 
@@ -41,7 +36,7 @@ expire old versions, and insert new versions while maintaining historical record
 
 ## Sample Dataset
 
-### 📘 Day 1 Snapshot — *customer_source_day1.csv*
+### Day 1 Snapshot
 
 | CUSTOMER_ID | CUSTOMER_NAME | CITY   | EMAIL                   | LOAD_DATE |
 |------------:|----------------|--------|--------------------------|------------|
@@ -49,7 +44,7 @@ expire old versions, and insert new versions while maintaining historical record
 | 102 | Sneha Iyer  | Pune   | sneha.iyer@example.com | 2025-10-15 |
 | 103 | Rajiv Soni  | Delhi  | rajiv.soni@example.com | 2025-10-15 |
 
-### 📘 Day 2 Snapshot — *customer_source_day2.csv*
+### Day 2 Snapshot
 
 | CUSTOMER_ID | CUSTOMER_NAME | CITY       | EMAIL                    | LOAD_DATE |
 |------------:|----------------|------------|---------------------------|------------|
@@ -75,10 +70,4 @@ expire old versions, and insert new versions while maintaining historical record
 ## Notes
 - Implements **SCD2 (Date + MD5)** logic with full historical tracking.  
 - Includes optional **notification** and **failure handling** branches.  
-- Demonstrates real-world **dimension maintenance automation** using IICS.  
-- Tested using **Informatica Cloud Data Integration (IICS)** with Oracle as target.  
-- Replace the ZIP filename if you re-export the job (timestamp may differ).  
-
----
-
-© Shashi Kant — Informatica IICS Projects Portfolio
+- Replace the ZIP filename in the link if you re-export (timestamp changes).
