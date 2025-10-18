@@ -22,12 +22,6 @@ This taskflow demonstrates how to pass runtime parameters across sequential data
 
 ---
 
-##  Mappings Executed
-- [`m_Load_Staging_Data`](../CDI/mappings/m_Load_Staging_Data.png)  
-- [`m_Transform_Customer_Data`](../CDI/mappings/m_Transform_Customer_Data.png)
-
----
-
 ##  Sub-Taskflow Dependency
 This orchestration invokes a supporting sub-taskflow to refresh cache tables after the main data processing:
 
